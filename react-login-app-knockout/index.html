@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KnockoutJS Login App</title>
+  <!-- KnockoutJS CDN -->
+  <script src="knockout-min.js"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Navbar (hidden on login) -->
+    <nav class="navbar" data-bind="visible: currentView() !== 'login'" aria-label="Main navigation">
+      <div class="navbar-content">
+        <div class="navbar-left">
+          <span class="app-title">Dashboard</span>
+        </div>
+        <ul class="navbar-menu">
+          <li class="disabled">Stats</li>
+          <li data-bind="css: { active: currentView() === 'posts' }, click: goToPosts">Posts</li>
+        </ul>
+        <div class="navbar-right">
+          <span class="welcome" data-bind="visible: email">
+            Welcome, <span data-bind="text: email"></span>
+          </span>
+          <button class="logout-btn" data-bind="click: logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+    <!--
+      This is a single-page app (SPA) structure.
+      I use KnockoutJS to control which section is visible.
+      Each section (login, posts, detail) is shown/hidden via observables for a seamless SPA experience.
+    -->
+    <!-- Login View -->
+    <div id="login-view" data-bind="visible: currentView() === 'login'">
+      <h2>Login</h2>
+      <form data-bind="submit: login">
+        <div>
+          <label for="companyCode">Company Code:</label>
+          <input type="text" id="companyCode" data-bind="value: companyCode" required />
+        </div>
+        <div>
+          <label for="region">Region:</label>
+          <input type="text" id="region" data-bind="value: region" required />
+        </div>
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" data-bind="value: email" required />
+        </div>
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" data-bind="value: password" required />
+        </div>
+        <button type="submit" data-bind="disable: loading">
+          <span data-bind="text: loading() ? 'Signing in...' : 'Sign In'"></span>
+        </button>
+      </form>
+    </div>
+    <div id="posts-view" data-bind="visible: currentView() === 'posts'">
+      <!-- Chart container (user post count pie chart) -->
+      <div class="chart-container">
+        <h3>Posts per User</h3>
+        <canvas id="postsPieChart" width="400" height="220"></canvas>
+      </div>
+      <!-- Search bar -->
+      <div class="search-container">
+        <div class="search-box">
+          <input type="text" placeholder="Search by title or body..." data-bind="value: searchQuery, valueUpdate: 'input'" />
+          <span class="search-icon">🔍</span>
+        </div>
+        <!-- I show the search result info and no-results message stacked for better UX. -->
+        <div class="search-info" data-bind="visible: searchQuery"></div>
+        <div class="no-results" data-bind="visible: searchQuery() && filteredPosts().length === 0"></div>
+      </div>
+      <!-- Posts grid -->
+      <div class="posts-grid">
+        <!-- ko foreach: paginatedPosts -->
+        <div class="post-card" data-bind="click: $parent.selectPost">
+          <h3 data-bind="text: title"></h3>
+          <p class="post-body" data-bind="text: body"></p>
+          <div class="post-card-footer">
+            <span class="user-email" data-bind="text: '- ' + $parent.getUserName(userId)"></span>
+            <button class="details-btn" data-bind="click: function(data, event) { $parent.selectPost($data); event.stopPropagation(); }">Details</button>
+          </div>
+        </div>
+        <!-- /ko -->
+      </div>
+      <!-- Pagination -->
+      <div class="pagination" data-bind="if: totalPages() > 1">
+        <button data-bind="click: function() { goToPage(currentPage() - 1) }, enable: currentPage() > 1">Prev</button>
+        <!-- ko foreach: paginationPages -->
+        <!-- ko if: $data === '...' -->
+        <button disabled style="pointer-events:none;opacity:0.6;">...</button>
+        <!-- /ko -->
+        <!-- ko if: $data !== '...' -->
+        <button data-bind="text: $data, click: function() { $parent.goToPage($data) }, css: { active: $data === $parent.currentPage() }"></button>
+        <!-- /ko -->
+        <!-- /ko -->
+        <button data-bind="click: function() { goToPage(currentPage() + 1) }, enable: currentPage() < totalPages()">Next</button>
+      </div>
+    </div>
+    <div id="detail-view" data-bind="visible: currentView() === 'detail' && selectedPost(), event: { click: function(vm, e) { if (e.target === e.currentTarget) closeDetail(); } }">
+      <div class="detail-modal">
+        <button class="close-modal" data-bind="click: closeDetail">&times;</button>
+        <h2>Edit Post</h2>
+        <form>
+          <div>
+            <label for="editTitle">Title</label>
+            <input id="editTitle" type="text" data-bind="value: editTitle" required />
+          </div>
+          <div>
+            <label for="editBody">Body</label>
+            <textarea id="editBody" data-bind="value: editBody" required></textarea>
+          </div>
+          <div class="button-group">
+            <button type="button" class="cancel" data-bind="click: closeDetail">Cancel</button>
+            <button type="button" class="save" data-bind="click: savePost">Save</button>
+            <div class="validation-error" data-bind="visible: validationError, text: validationError"></div>
+            <div class="success-message-inside" data-bind="visible: showSuccess">Changes saved!</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JS -->
+  <script src="main.js"></script>
+</body>
+</html>
