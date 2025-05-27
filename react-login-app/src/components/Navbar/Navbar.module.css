@@ -1,0 +1,79 @@
+.navbarRoot {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fff;
+  border-bottom: 1px solid #ececec;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 68px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.navbarInner {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+}
+
+.navbarTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 20px;
+  color: #7c3aed;
+  letter-spacing: 1px;
+}
+
+.navbarLinks {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.navbarProfile {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 24px;
+  color: #6b7280;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.logoutBtn {
+  background: #ede9fe;
+  color: #7c3aed;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 8px 16px;
+  margin-left: 12px;
+  transition: background 0.2s, color 0.2s;
+}
+
+@media (max-width: 900px) {
+  .navbarInner { padding: 0 6px !important; height: 56px !important; }
+  .navbarLinks { gap: 12px !important; }
+  .navbarTitle { font-size: 15px !important; }
+  .navbarProfile { font-size: 12px !important; margin-left: 6px !important; }
+}
+@media (max-width: 600px) {
+  .navbarRoot { height: auto !important; min-height: 48px !important; }
+  .navbarInner { flex-direction: column !important; align-items: stretch !important; padding: 0 2vw !important; height: auto !important; gap: 8px !important; }
+  .navbarLinks { flex-direction: column !important; gap: 10px !important; width: 100%; align-items: center !important; justify-content: center !important; }
+  .navbarProfile { margin-left: 0 !important; margin-top: 6px !important; font-size: 11px !important; }
+  .navbarTitle { font-size: 13px !important; margin-bottom: 4px !important; }
+  .navbarProfile { display: none !important; }
+}
+@media (max-width: 400px) {
+  .navbarTitle { font-size: 11px !important; }
+  .navbarInner { padding: 0 1vw !important; }
+} 
